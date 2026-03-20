@@ -21,6 +21,7 @@ module Token = struct
     | ID of string                      (* identifiers *)
     | OP of string                      (* operators *)
     | KWD of string                     (* keywords *)
+    | TYPE of string                    (* type annotation *)
     | NUM of string * string            (* numbers *)
     | STR of string                     (* strings *)
     | PUNCT of string                   (* misc. punctuation *)
@@ -41,6 +42,7 @@ module Token = struct
           | BOF -> "start of file"
           | ID x -> "identifier " ^ x
           | KWD x -> "keyword " ^ x
+          | TYPE x -> "type " ^ x
           | OP x -> "operator " ^ x
           | PUNCT x -> x
           | NUM (m, "") -> m
@@ -177,6 +179,12 @@ let anyident = scan begin
 end
 
 let ident i = anyident <?> (fun j -> i = j)
+
+let anytype = scan begin
+    function
+    | TYPE t -> Some t
+    | _ -> None
+end
 
 let anyname = scan begin
   function

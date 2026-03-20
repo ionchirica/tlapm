@@ -37,7 +37,7 @@ let rec pp_print_modunit ?(force=false) cx ff mu = match mu.core with
       fprintf ff "@[<b2>RECURSIVE@ %a@]@,"
         (pp_print_delimited pp_print_shaped) cs ;
       ncx
-  | Variables vs ->
+  | Variables (_, vs) ->
       let (ncx, vs) = adjs cx vs in
       fprintf ff "@[<b2>VARIABLE%s@ %a@]@,"
         (if ((List.length vs) = 1) then "" else "S")

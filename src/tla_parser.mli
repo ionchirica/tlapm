@@ -12,6 +12,7 @@ module Token: sig
         | ID of string  (* identifiers *)
         | OP of string  (* operators *)
         | KWD of string  (* keywords *)
+        | TYPE of string  (* type annotation *)
         | NUM of string * string  (* numbers *)
         | STR of string  (* strings *)
         | PUNCT of string  (* misc. punctuation *)
@@ -46,6 +47,7 @@ type 'a lprs = 'a prs Lazy.t
 val locate: ('a, 'b) P.prs ->
     ('a, 'b Property.wrapped) P.prs
 val anyident: (pcx, string) P.prs
+val anytype: (pcx, string) P.prs
 val prefix: string -> (pcx, string) P.prs
 val punct: string -> (pcx, string) P.prs
 val anyop: (pcx, string) P.prs

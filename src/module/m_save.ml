@@ -360,7 +360,7 @@ let%test_module _ = (module struct
                 instancees = [] ;
                 defdepth = 0 ;
                 important = true ;
-                body = [ noprops (Variables [noprops df]) ];
+                body = [ noprops (Variables (None, [noprops df])) ];
                 stage = Parsed ;
             }
         end in
@@ -374,7 +374,7 @@ let%test_module _ = (module struct
             let rfold = List.fold_left Filename.concat ".." ["test"; "resources"; "module"; "m_save"] in
             (List.exists
                 (function
-                    | {core = Variables ls} -> List.exists (fun x -> x.core = "m_save_t1") ls
+                    | {core = Variables (None, ls)} -> List.exists (fun x -> x.core = "m_save_t1") ls
                     | _ -> false )
                 (Sm.find "TLC" (complete_load ~root:rfold test_case)).core.body)
 

@@ -22,7 +22,7 @@ and app_modunit (s: sub) (mu: modunit):  (sub * modunit) =
         (bumpn (List.length cs) s, mu)
     | Recursives cs ->
         (bumpn (List.length cs) s, mu)
-    | Variables vs ->
+    | Variables (_, vs) ->
         (bumpn (List.length vs) s, mu)
     | Definition (df, wd, vis, ex) ->
         let df = app_defn s df in

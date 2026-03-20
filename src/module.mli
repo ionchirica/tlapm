@@ -7,6 +7,12 @@ module T : sig
   open Util
   open Expr.T
   open Proof.T
+
+  type type_annot = {
+    target_name : string;
+    v_type : string; 
+  }
+
   type mule = mule_ wrapped
   and mule_ = {
     name              : hint ;
@@ -22,7 +28,7 @@ module T : sig
   and modunit_ =
     | Constants  of (hint * shape) list
     | Recursives of (hint * shape) list
-    | Variables  of hints
+    | Variables of (type_annot option) * hints 
     | Definition of defn * wheredef * visibility * export
     | Axiom      of hint option * expr
     | Theorem    of hint option * sequent * int * proof * proof * summary

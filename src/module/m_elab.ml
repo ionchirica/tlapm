@@ -107,7 +107,7 @@ let module_parameters (tla_module: M_t.mule):
                     let f = fun params (name, _) ->
                                 StringSet.add name.core params in
                     List.fold_left f params constants
-                | Variables variables ->
+                | Variables (_, variables) ->
                     let f = fun params name ->
                                 StringSet.add name.core params in
                     List.fold_left f params variables
@@ -307,7 +307,7 @@ let rec apply_subst body body_len subst = function
     | [] -> List.rev body
     | mu :: mus -> begin match mu.core with
         | Constants [nm, _]
-        | Variables [nm] ->
+        | Variables (_, [nm]) ->
             let e = HintMap.find nm subst in
             let e = app_expr (shift body_len) e in
             let (_, mus) = M_subst.app_modunits (scons e (shift 0)) mus in
@@ -317,10 +317,10 @@ let rec apply_subst body body_len subst = function
                 (Constants [c] @@ mu)
                     :: (Constants cs @@ mu)
                     :: mus)
-        | Variables (v :: vs) ->
+        | Variables (s, (v :: vs)) ->
             apply_subst body body_len subst (
-                (Variables [v] @@ mu)
-                    :: (Variables vs @@ mu)
+                (Variables (s, [v]) @@ mu)
+                    :: (Variables (s, vs) @@ mu)
                     :: mus)
         | _ ->
             apply_subst (mu :: body) (body_len + hyp_size mu) subst mus

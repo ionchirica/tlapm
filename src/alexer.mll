@@ -38,6 +38,9 @@ let namechar = (letter | numeral | '_')
 
 let name     = namechar* letter namechar*
 
+let typeof   = "typeof"
+let colon    = ":"
+
 let keyword = (
   "ASSUME"|"ASSUMPTION"|"AXIOM"|"BOOLEAN"|"CASE"|"CHOOSE"|"CONSTANT"
   |"CONSTANTS"|"BY"|"DEF"|"DEFINE"|"DEFS"|"LAMBDA"|"OBVIOUS"|"ELSE"
@@ -68,10 +71,12 @@ and token = parse
       { [ PUNCT prag ] }
 
   (* comments *)
-  | "\\*"
+  | "\\"
       { linecom lexbuf }
-  | "(*"
+  | "(* "
       { comment 1 lexbuf }
+  | "(*@" | "(* @"
+      { annot lexbuf }
 
   (* exceptions *)
   | ("[]" as op)
@@ -213,6 +218,19 @@ and comment depth = parse
       { comment (depth + 1) lexbuf }
   | _
       { comment depth lexbuf }
+
+and annot = parse
+  | whitesp+         { annot lexbuf }
+  | newline          { eol lexbuf ; annot lexbuf }
+  | "typeof"         { KWD "typeof" :: annot lexbuf }
+  | ":"              { PUNCT ":" :: collect_type (Buffer.create 16) lexbuf }
+  | "*)"             { [] }
+  | eof              { [] }
+
+and collect_type buf = parse
+  | "*)"             { [ TYPE (String.trim (Buffer.contents buf)) ] }
+  | newline          { eol lexbuf ; collect_type buf lexbuf }
+  | (_ as c)         { Buffer.add_char buf c ; collect_type buf lexbuf }
 
 {
 

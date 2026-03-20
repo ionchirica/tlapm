@@ -126,7 +126,7 @@ let%test_module _ = (module struct
             instancees = [] ;
             defdepth = 0 ;
             important = true ;
-            body = [ noprops (Variables [noprops df]) ];
+            body = [ noprops (Variables (None, [noprops df])) ];
             stage = Parsed ;
           }
         end in
@@ -135,7 +135,7 @@ let%test_module _ = (module struct
 
   let cmd (_,modlist) n = List.flatten (
           List.map (function
-        | {core=Variables(varlist);props=_}
+        | {core=Variables(None, varlist);props=_}
           -> List.map (function x -> x.core) varlist
         | _ -> failwith "not supported"
       ) ((List.nth modlist n).core.body))

@@ -1229,7 +1229,7 @@ and translate_unit (unit : Module.T.modunit) : field_or_node =
     name = "constant_declaration";
     children = List.map translate_constant_decl ls
   }
-  | Variables ls -> Node {
+  | Variables (_, ls) -> Node {
     name = "variable_declaration";
     children = List.map translate_variable_decl ls
   }

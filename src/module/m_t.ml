@@ -11,6 +11,10 @@ open Expr.Subst
 open Expr.T
 open Proof.T
 
+type type_annot = {
+  target_name : string;
+  v_type : string; 
+}
 
 (* module type. Cannot use "module",
 because it is a keyword in OCaml.
@@ -30,7 +34,7 @@ and modunit = modunit_ wrapped
 and modunit_ =
     | Constants of (hint * shape) list
     | Recursives of (hint * shape) list
-    | Variables of hints
+    | Variables of (type_annot option) * hints 
     | Definition of
         defn * wheredef *
         visibility * export
@@ -109,7 +113,7 @@ let hyps_of_modunit
                     Hidden,
                     Export) @@ mu)
             cs
-    | Variables vs ->
+    | Variables (_, vs) ->
         List.map (fun nm -> Flex nm @@ mu) vs
     | Definition (df, wd, vis, ex) ->
         (* defined instances are assumed
@@ -181,7 +185,7 @@ let hyp_size
     match mu.core with
     | Constants cs -> List.length cs
     | Recursives cs -> List.length cs
-    | Variables vs -> List.length vs
+    | Variables (_, vs) -> List.length vs
     | Definition _ -> 1
     | Axiom (nm, _)
     | Theorem (nm, _, _, _, _, _) ->

@@ -14,6 +14,7 @@ open Expr.Parser
 open M_t
 
 
+
 let with_meth e meth = match meth with
   | Some meth -> { e with core = With (e, meth) }
   | None -> e
@@ -29,9 +30,19 @@ let rec modunit = lazy begin
         sep1 (punct ",") (use opdecl)
       <$> (fun cs -> [ Recursives cs ]) ;
 
-      (kwd "VARIABLE" <|> kwd "VARIABLES") >*>
-        sep1 (punct ",") (locate anyident)
-      <$> (fun vs -> [ Variables vs ]) ;
+      ((kwd "VARIABLE" <|> kwd "VARIABLES")
+       >*> ((kwd "typeof" >*> punct ":" >*> locate anytype)
+            <*> sep1 (punct ",") (locate anyident)))
+      <$> begin fun (type_loc, vs) ->
+        List.map (fun name_loc ->
+            Variables (Some { target_name = name_loc.core; v_type = type_loc.core }, [name_loc])
+          ) vs
+      end ;
+
+      ((kwd "VARIABLE" <|> kwd "VARIABLES") >*> sep1 (punct ",") (locate anyident))
+      <$> begin fun vs -> 
+        [ Variables (None, vs) ] 
+      end ;
     ] ;
 
     optional (kwd "LOCAL") >>= begin fun l ->

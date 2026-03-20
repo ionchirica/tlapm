@@ -9,6 +9,11 @@ open Expr.T
 open Proof.T
 
 
+type type_annot = {
+  target_name : string;
+  v_type : string; (* this represents the type as a string *) 
+}
+
 (* module/m_fmt.ml *)
 type mule = mule_ wrapped
 and mule_ = {
@@ -29,7 +34,7 @@ and modunit = modunit_ wrapped
 and modunit_ =
     | Constants of (hint * shape) list
     | Recursives of (hint * shape) list
-    | Variables of hints
+    | Variables of (type_annot option) * hints
     | Definition of
         defn * wheredef * visibility * export
     | Axiom of hint option * expr

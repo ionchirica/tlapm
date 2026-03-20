@@ -80,7 +80,7 @@ class map =
             (* Declarations *)
             | Constants decls ->
                 self#constants cx decls
-            | Variables names ->
+            | Variables (_, names) ->
                 self#variables cx names
             | Recursives decls ->
                 self#recursives cx decls
@@ -119,7 +119,7 @@ class map =
         (cx, mu)
 
     method variables cx names =
-        let mu = Variables names in
+        let mu = Variables (None, names) in
         let cx = update_cx cx mu in
         (cx, mu)
 
