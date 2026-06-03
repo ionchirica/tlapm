@@ -78,7 +78,7 @@ class map =
         let cx, core =
             match mu.core with
             (* Declarations *)
-            | Constants decls ->
+            | Constants (_, decls) ->
                 self#constants cx decls
             | Variables (_, names) ->
                 self#variables cx names
@@ -114,7 +114,7 @@ class map =
         (cx, core @@ mu)
 
     method constants cx decls =
-        let mu = Constants decls in
+        let mu = Constants (None, decls) in
         let cx = update_cx cx mu in
         (cx, mu)
 

@@ -32,7 +32,7 @@ and mule_ = {
 (* module unit *)
 and modunit = modunit_ wrapped
 and modunit_ =
-    | Constants of (hint * shape) list
+    | Constants of (type_annot option) * (hint * shape) list
     | Recursives of (hint * shape) list
     | Variables of (type_annot option) * hints 
     | Definition of
@@ -95,7 +95,7 @@ let salt_prop: unit pfuncs =
 let hyps_of_modunit
         (mu: modunit) =
     match mu.core with
-    | Constants cs ->
+    | Constants (_, cs) ->
         List.map
             (fun (nm, shp) ->
                 Fresh (
@@ -183,7 +183,7 @@ let hyps_of_modunit
 let hyp_size
         (mu: modunit) =
     match mu.core with
-    | Constants cs -> List.length cs
+    | Constants (_, cs) -> List.length cs
     | Recursives cs -> List.length cs
     | Variables (_, vs) -> List.length vs
     | Definition _ -> 1

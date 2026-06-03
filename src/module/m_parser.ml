@@ -19,30 +19,53 @@ let with_meth e meth = match meth with
   | Some meth -> { e with core = With (e, meth) }
   | None -> e
 
+let parse_hint_shape =
+  (locate anyident) >>= fun h ->
+  (optional (punct "(" >*> sep1 (punct ",") (punct "_") <*> punct ")"))
+  <$> (function
+      | Some (underscores, _) -> (h, Shape_op (List.length underscores))
+      | None             -> (h, Shape_expr))
+
 let rec modunit = lazy begin
   choice [
     choice [
-      (kwd "CONSTANT" <|> kwd "CONSTANTS") >*>
-        sep1 (punct ",") (use opdecl)
-      <$> (fun cs -> [ Constants cs ]) ;
+      ((kwd "CONSTANT" <|> kwd "CONSTANTS") >*>
+        choice [
+          ((kwd "typeof" >*> punct ":" >*> locate anytype)
+           <*> sep1 (punct ",") (use opdecl)
+          <$> begin fun (type_loc, hs) ->
+            List.map (fun (h, shape) ->
+                Constants (Some { target_name = String.lowercase_ascii h.core; v_type = type_loc.core }, [(h, shape)])
+              ) hs
+          end) ;
 
-      (kwd "RECURSIVE") >*>
-        sep1 (punct ",") (use opdecl)
+          (sep1 (punct ",") (use opdecl)
+          <$> begin fun hs ->
+            [ Constants (None, hs) ]
+          end) ;
+        ]
+      ) ;
+
+      (kwd "RECURSIVE") >*> sep1 (punct ",") (use opdecl)
       <$> (fun cs -> [ Recursives cs ]) ;
 
-      ((kwd "VARIABLE" <|> kwd "VARIABLES")
-       >*> ((kwd "typeof" >*> punct ":" >*> locate anytype)
-            <*> sep1 (punct ",") (locate anyident)))
-      <$> begin fun (type_loc, vs) ->
-        List.map (fun name_loc ->
-            Variables (Some { target_name = name_loc.core; v_type = type_loc.core }, [name_loc])
-          ) vs
-      end ;
+      ((kwd "VARIABLE" <|> kwd "VARIABLES") >*>
+        choice [
+          (* With Type Annotation *)
+          ((kwd "typeof" >*> punct ":" >*> locate anytype)
+           <*> sep1 (punct ",") (locate anyident)
+          <$> begin fun (type_loc, vs) ->
+            List.map (fun name_loc ->
+                Variables (Some { target_name = String.lowercase_ascii name_loc.core; v_type = type_loc.core }, [name_loc])
+              ) vs
+          end) ;
 
-      ((kwd "VARIABLE" <|> kwd "VARIABLES") >*> sep1 (punct ",") (locate anyident))
-      <$> begin fun vs -> 
-        [ Variables (None, vs) ] 
-      end ;
+          (sep1 (punct ",") (locate anyident)
+          <$> begin fun vs -> 
+            [ Variables (None, vs) ] 
+          end ) ;
+        ]
+      ) ;
     ] ;
 
     optional (kwd "LOCAL") >>= begin fun l ->

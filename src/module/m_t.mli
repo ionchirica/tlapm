@@ -32,7 +32,7 @@ and mule_ = {
 (* module unit *)
 and modunit = modunit_ wrapped
 and modunit_ =
-    | Constants of (hint * shape) list
+    | Constants of (type_annot option) * (hint * shape) list
     | Recursives of (hint * shape) list
     | Variables of (type_annot option) * hints
     | Definition of

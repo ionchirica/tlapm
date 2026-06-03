@@ -103,7 +103,7 @@ let module_parameters (tla_module: M_t.mule):
         | [] -> params
         | module_unit :: module_units ->
             let params = begin match module_unit.core with
-                | Constants constants ->
+                | Constants (_, constants) ->
                     let f = fun params (name, _) ->
                                 StringSet.add name.core params in
                     List.fold_left f params constants
@@ -306,16 +306,16 @@ let rec apply_subst body body_len subst = function
     (* Perform the substitution. *)
     | [] -> List.rev body
     | mu :: mus -> begin match mu.core with
-        | Constants [nm, _]
+        | Constants (_, [nm, _])
         | Variables (_, [nm]) ->
             let e = HintMap.find nm subst in
             let e = app_expr (shift body_len) e in
             let (_, mus) = M_subst.app_modunits (scons e (shift 0)) mus in
             apply_subst body body_len subst mus
-        | Constants (c :: cs) ->
+        | Constants (s, (c :: cs)) ->
             apply_subst body body_len subst (
-                (Constants [c] @@ mu)
-                    :: (Constants cs @@ mu)
+                (Constants (s, [c]) @@ mu)
+                    :: (Constants (s, cs) @@ mu)
                     :: mus)
         | Variables (s, (v :: vs)) ->
             apply_subst body body_len subst (

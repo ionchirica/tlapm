@@ -18,7 +18,7 @@ let rec app_modunits (s: sub) (mus: modunit list):  (sub * modunit list) =
 
 and app_modunit (s: sub) (mu: modunit):  (sub * modunit) =
     match mu.core with
-    | Constants cs ->
+    | Constants (_, cs) ->
         (bumpn (List.length cs) s, mu)
     | Recursives cs ->
         (bumpn (List.length cs) s, mu)

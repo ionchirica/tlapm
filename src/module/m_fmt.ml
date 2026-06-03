@@ -18,12 +18,12 @@ let pp_print_shaped ff (n, shp) =
   fprintf ff "%s%a" n pp_print_shape shp
 
 let rec pp_print_modunit ?(force=false) cx ff mu = match mu.core with
-  | Constants [c, shp] ->
+  | Constants (_, [c, shp]) ->
       let (ncx, c) = adj cx c in
       fprintf ff "@[<b2>CONSTANT@ %s%a@]@,"
         c pp_print_shape shp ;
       ncx
-  | Constants cs ->
+  | Constants (_, cs) ->
       let ns = List.map fst cs in
       let (ncx, ns) = adjs cx ns in
       let cs = List.map2 (fun n (_, shp) -> (n, shp)) ns cs in
