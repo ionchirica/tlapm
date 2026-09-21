@@ -31,6 +31,7 @@ let rec modunit = lazy begin
     choice [
       ((kwd "CONSTANT" <|> kwd "CONSTANTS") >*>
         choice [
+          (* whyml type annotation *)
           ((kwd "typeof" >*> punct ":" >*> locate anytype)
            <*> sep1 (punct ",") (use opdecl)
           <$> begin fun (type_loc, hs) ->
@@ -51,8 +52,8 @@ let rec modunit = lazy begin
 
       ((kwd "VARIABLE" <|> kwd "VARIABLES") >*>
         choice [
-          (* With Type Annotation *)
-          ((kwd "typeof" >*> punct ":" >*> locate anytype)
+          (* whyml type annotation *)
+          ((kwd "typeof:" >*> locate anytype)
            <*> sep1 (punct ",") (locate anyident)
           <$> begin fun (type_loc, vs) ->
             List.map (fun name_loc ->

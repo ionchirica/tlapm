@@ -42,7 +42,7 @@ module Token = struct
           | BOF -> "start of file"
           | ID x -> "identifier " ^ x
           | KWD x -> "keyword " ^ x
-          | TYPE x -> "type " ^ x
+          | TYPE x -> "typeof " ^ x
           | OP x -> "operator " ^ x
           | PUNCT x -> x
           | NUM (m, "") -> m

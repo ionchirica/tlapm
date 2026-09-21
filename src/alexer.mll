@@ -75,7 +75,7 @@ and token = parse
       { linecom lexbuf }
   | "(* "
       { comment 1 lexbuf }
-  | "(*@" | "(* @"
+  | "(*@" (* | "(\* @" *)
       { annot lexbuf }
 
   (* exceptions *)
