@@ -53,7 +53,7 @@ let rec modunit = lazy begin
       ((kwd "VARIABLE" <|> kwd "VARIABLES") >*>
         choice [
           (* whyml type annotation *)
-          ((kwd "typeof:" >*> locate anytype)
+          ((kwd "typeof" >*> punct ":" >*> locate anytype)
            <*> sep1 (punct ",") (locate anyident)
           <$> begin fun (type_loc, vs) ->
             List.map (fun name_loc ->
