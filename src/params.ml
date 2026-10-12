@@ -11,10 +11,10 @@ let self_sum = Digest.file Sys.executable_name
 
 (* must be a function because it must not be computed before all the
    modules are loaded. *)
-let rawversion () =
-  match Build_info.V1.version () with
-   | None -> "development"
-   | Some v -> Build_info.V1.Version.to_string v
+let rawversion () = "development"
+  (* match Build_info.V1.version () with *)
+  (*  | None -> "development" *)
+  (*  | Some v -> Build_info.V1.Version.to_string v *)
 
 
 let debug_flags : (string, unit) Hashtbl.t = Hashtbl.create 3
