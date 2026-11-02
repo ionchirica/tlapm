@@ -36,7 +36,7 @@ let rec modunit = lazy begin
            <*> sep1 (punct ",") (use opdecl)
           <$> begin fun (type_loc, hs) ->
             List.map (fun (h, shape) ->
-                Constants (Some { target_name = String.lowercase_ascii h.core; v_type = type_loc.core }, [(h, shape)])
+                Constants (Some { target_name = String.uncapitalize_ascii h.core; v_type = type_loc.core }, [(h, shape)])
               ) hs
           end) ;
 
@@ -57,7 +57,7 @@ let rec modunit = lazy begin
            <*> sep1 (punct ",") (locate anyident)
           <$> begin fun (type_loc, vs) ->
             List.map (fun name_loc ->
-                Variables (Some { target_name = String.lowercase_ascii name_loc.core; v_type = type_loc.core }, [name_loc])
+                Variables (Some { target_name = String.uncapitalize_ascii name_loc.core; v_type = type_loc.core }, [name_loc])
               ) vs
           end) ;
 
